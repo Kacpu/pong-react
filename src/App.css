@@ -4,7 +4,7 @@
   height: 90vh;
 }
 
-canvas {
+.Game {
   margin: 0;
   position: absolute;
   top: 50%;
@@ -13,5 +13,22 @@ canvas {
   height: 500px;
   width: 800px;
   border: 1px solid black;
+}
+
+.ManagePanel {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+button {
+  width: 80px;
+  height: 30px;
+}
+
+label {
+  font-size: 25px;
+  line-height: 1;
 }
 

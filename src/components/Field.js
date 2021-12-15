@@ -9,23 +9,25 @@ class Field extends Component{
             height: 500
         }
         this.player = {
-            x: 20,
             width: 10,
             height: 70
         }
         this.player1 = {
+            x: 20,
             y: this.canvas.height/2 - this.player.height/2,
             up: false,
             down: false
         };
         this.player2 = {
+            x: this.canvas.width - 20 - this.player.width,
             y: this.canvas.height/2 - this.player.height/2,
             up: false,
             down: false
         }
         this.ball = {
-            speed: 5,
-            radius: 10,
+            speedX: 3,
+            speedY: 0,
+            radius: 5,
             x: this.canvas.width / 2,
             y: this.canvas.height / 2
         }
@@ -37,22 +39,20 @@ class Field extends Component{
         canvas.height = this.canvas.height;
         canvas.focus();
         const ctx = canvas.getContext('2d')
-        const p1x = this.player.x;
-        const p2x = canvas.width - this.player.x - this.player.width;
         this.ball.x = this.ball.x - this.ball.radius/2;
         this.ball.y = this.ball.y - this.ball.radius/2;
-        this.interval = setInterval(() => {this.draw(ctx, p1x,p2x)}, 1000/60);
+        this.interval = setInterval(() => {this.draw(ctx)}, 1000/60);
     }
 
     componentWillUnmount() {
         clearInterval(this.interval);
     }
 
-    draw = (ctx, p1x, p2x) => {
+    draw = (ctx) => {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.movePlayers();
-        this.drawPlayer(ctx, p1x, this.player1.y);
-        this.drawPlayer(ctx, p2x, this.player2.y);
+        this.drawPlayer(ctx, this.player1.x, this.player1.y);
+        this.drawPlayer(ctx, this.player2.x, this.player2.y);
         this.drawBall(ctx);
     }
 
@@ -61,20 +61,41 @@ class Field extends Component{
     }
 
     drawBall = (ctx) => {
-        if(this.ball.x - this.ball.radius < 0 || this.ball.x + this.ball.radius > this.canvas.width){
-            this.ball.speed = - this.ball.speed;
-        }
+        this.checkCollision();
 
-        if(this.ball.y - this.ball.radius < 0 || this.ball.y + this.ball.radius > this.canvas.height){
-            this.ball.speed = - this.ball.speed;
-        }
-
-        this.ball.x = this.ball.x - this.ball.speed;
-        this.ball.y = this.ball.y - this.ball.speed;
+        this.ball.x = this.ball.x - this.ball.speedX;
+        this.ball.y = this.ball.y - this.ball.speedY;
 
         ctx.beginPath();
         ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, 2 * Math.PI);
         ctx.fill();
+    }
+
+    checkCollision = () => {
+        const ballLeft = this.ball.x - this.ball.radius;
+        const ballRight = this.ball.x + this.ball.radius;
+        const ballTop = this.ball.y - this.ball.radius;
+        const ballDown = this.ball.y + this.ball.radius;
+
+        if(ballLeft < 0 || ballRight > this.canvas.width){
+            this.ball.speedX = - this.ball.speedX;
+        }
+
+        if(ballTop < 0 || ballDown > this.canvas.height){
+            this.ball.speedY = - this.ball.speedY;
+        }
+
+        if(ballLeft <= this.player1.x + this.player.width && ballLeft >= this.player1.x &&
+            ballTop >= this.player1.y && ballDown <= this.player1.y + this.player.height){
+            this.ball.speedY = this.ball.speedY === 0 ? this.ball.speedX : this.ball.speedY;
+            this.ball.speedX = - this.ball.speedX;
+        }
+
+        if(ballRight >= this.player2.x && ballRight <= this.player2.x + this.player.width &&
+            ballTop >= this.player2.y && ballDown <= this.player2.y + this.player.height){
+            this.ball.speedY = this.ball.speedY === 0 ? this.ball.speedX : this.ball.speedY;
+            this.ball.speedX = - this.ball.speedX;
+        }
     }
 
     movePlayers = () => {
