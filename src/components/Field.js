@@ -1,13 +1,23 @@
 import React, {Component} from "react";
+import '../App.css';
 
 class Field extends Component{
     constructor(props) {
         super(props);
-        this.canvasRef = React.createRef();
         this.canvas = {
             width: 800,
             height: 500
         }
+    }
+
+    componentDidMount() {
+        const canvas = this.props.canvasRef.current
+        canvas.width = this.canvas.width;
+        canvas.height = this.canvas.height;
+        this.props.start(this.setField, this.draw);
+    }
+
+    setField = () => {
         this.player = {
             width: 10,
             height: 70
@@ -25,27 +35,14 @@ class Field extends Component{
             down: false
         }
         this.ball = {
-            speedX: 3,
+            speedX: 4,
             speedY: 0,
             radius: 5,
             x: this.canvas.width / 2,
             y: this.canvas.height / 2
         }
-    }
-
-    componentDidMount() {
-        const canvas = this.canvasRef.current
-        canvas.width = this.canvas.width;
-        canvas.height = this.canvas.height;
-        canvas.focus();
-        const ctx = canvas.getContext('2d')
         this.ball.x = this.ball.x - this.ball.radius/2;
         this.ball.y = this.ball.y - this.ball.radius/2;
-        this.interval = setInterval(() => {this.draw(ctx)}, 1000/60);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
     }
 
     draw = (ctx) => {
@@ -77,8 +74,14 @@ class Field extends Component{
         const ballTop = this.ball.y - this.ball.radius;
         const ballDown = this.ball.y + this.ball.radius;
 
-        if(ballLeft < 0 || ballRight > this.canvas.width){
+        if(ballLeft < 0){
+            this.props.updateScore('2');
+            this.setField();
             this.ball.speedX = - this.ball.speedX;
+        }
+        if(ballRight > this.canvas.width){
+            this.props.updateScore('1');
+            this.setField();
         }
 
         if(ballTop < 0 || ballDown > this.canvas.height){
@@ -134,10 +137,11 @@ class Field extends Component{
 
     render() {
         return(
-            <canvas tabIndex={0}
-                    ref={this.canvasRef}
-                    onKeyDown={this.handleKey}
-                    onKeyUp={this.handleKey}
+            <canvas className={'Field'}
+                tabIndex={0}
+                ref={this.props.canvasRef}
+                onKeyDown={this.handleKey}
+                onKeyUp={this.handleKey}
             />
         );
     }

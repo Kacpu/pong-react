@@ -10,9 +10,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 500px;
-  width: 800px;
-  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.Field {
+  border:3px solid black;
+  border-left: 8px solid indianred;
+  border-right: 8px solid indianred;
 }
 
 .ManagePanel {
@@ -20,6 +26,13 @@
   display: flex;
   justify-content: space-between;
   align-content: center;
+}
+
+.Timer {
+  font-size: 15px;
+  line-height: 1;
+  align-self: flex-end;
+  margin-bottom: 10px;
 }
 
 button {
@@ -30,5 +43,9 @@ button {
 label {
   font-size: 25px;
   line-height: 1;
+}
+
+:focus-visible {
+  outline: -webkit-focus-ring-color auto 0;
 }
 

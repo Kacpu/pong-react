@@ -4,7 +4,7 @@ function ManagePanel(props){
     return(
         <div className={'ManagePanel'}>
             <button onClick={props.onPause}>
-                Pause
+                {props.isStart === true ? 'Pause':'Start'}
             </button>
             <label>{props.p1Score} : {props.p2Score}</label>
             <button onClick={props.onReset}>
